@@ -20,7 +20,7 @@ function AppContent() {
   const [viewCount, setViewCount] = useState<number | 'all'>(() => {
     const saved = localStorage.getItem('teamViewCount');
     if (saved === 'all') return 'all';
-    return saved ? parseInt(saved, 10) : 1;
+    return saved ? parseInt(saved, 10) : 2;
   });
 
   // Persist view count
