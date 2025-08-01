@@ -268,11 +268,11 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h5 className="font-medium text-gray-800">{t('common.steps')}</h5>
+        <h5 className="font-medium text-[rgb(var(--text-primary))]">{t('common.steps')}</h5>
         {showVerification && (
           <button
             onClick={() => setNewStep('')}
-            className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 px-3 py-1 rounded-lg hover:bg-indigo-50"
+            className="flex items-center gap-2 text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-700))] px-3 py-1 rounded-lg hover:bg-[rgb(var(--primary-50))] dark:hover:bg-[rgb(var(--primary-900))]/20"
           >
             <ListPlus size={20} />
             <span>{t('actions.addStep')}</span>
@@ -284,7 +284,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
         {steps.map((step) => (
           <div
             key={step.id}
-            className={`flex items-center gap-2 p-2 rounded-md transition-colors bg-gray-50 hover:bg-gray-100
+            className={`flex items-center gap-2 p-2 rounded-md transition-colors bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--bg-tertiary))]
               ${step.status === 'working' 
                 ? 'border-4 border-green-500' 
                 : step.status === 'not_working' 
@@ -321,20 +321,20 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
             }}
           >
             <div 
-              className="cursor-move p-1 hover:bg-gray-200 rounded"
+              className="cursor-move p-1 hover:bg-[rgb(var(--bg-tertiary))] rounded"
               onMouseDown={(e) => e.stopPropagation()}
             >
-              <GripVertical size={20} className="text-gray-400" />
+              <GripVertical size={20} className="text-[rgb(var(--text-tertiary))]" />
             </div>
             
             <div className="flex-1">
-              <span className="font-medium text-indigo-600 mr-2">#{step.number}</span>
+              <span className="font-medium text-[rgb(var(--primary-600))] mr-2">#{step.number}</span>
               {editingStepId === step.id ? (
                 <textarea
                   ref={textareaRef}
                   value={editingText}
                   onChange={(e) => setEditingText(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500 min-h-[60px]"
+                  className="w-full px-3 py-2 bg-[rgb(var(--bg-primary))] text-[rgb(var(--text-primary))] border border-[rgb(var(--border-primary))] rounded-md focus:ring-2 focus:ring-[rgb(var(--primary-500))] min-h-[60px]"
                   autoFocus
                 />
               ) : (
@@ -370,7 +370,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                           </button>
                           
                           {mediaOptionsOpen === media.id && (
-                            <div className="media-options-menu absolute right-0 top-8 z-10 w-40 bg-white rounded-lg shadow-lg overflow-hidden">
+                            <div className="media-options-menu absolute right-0 top-8 z-10 w-40 bg-[rgb(var(--bg-primary))] rounded-lg shadow-lg overflow-hidden">
                               <div className="py-1">
                                 <button
                                   onClick={(e) => {
@@ -378,7 +378,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                                     handleOpenMedia(step.id, media.id);
                                     setMediaOptionsOpen(null);
                                   }}
-                                  className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  className="flex items-center gap-2 px-4 py-2 text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] w-full text-left"
                                 >
                                   <Image size={16} />
                                   <span>Ver imagen</span>
@@ -389,7 +389,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                                     handleDirectDownload(media);
                                   }}
                                   disabled={downloadingMedia === media.id}
-                                  className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  className="flex items-center gap-2 px-4 py-2 text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] w-full text-left"
                                 >
                                   {downloadingMedia === media.id ? (
                                     <Loader2 size={16} className="animate-spin" />
@@ -404,7 +404,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                                     setMediaToDelete({ stepId: step.id, mediaId: media.id });
                                     setMediaOptionsOpen(null);
                                   }}
-                                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left"
+                                  className="flex items-center gap-2 px-4 py-2 text-[rgb(var(--error))] hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"
                                 >
                                   <Trash2 size={16} />
                                   <span>Eliminar</span>
@@ -431,7 +431,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                           </button>
                           
                           {mediaOptionsOpen === media.id && (
-                            <div className="media-options-menu absolute right-0 top-8 z-10 w-40 bg-white rounded-lg shadow-lg overflow-hidden">
+                            <div className="media-options-menu absolute right-0 top-8 z-10 w-40 bg-[rgb(var(--bg-primary))] rounded-lg shadow-lg overflow-hidden">
                               <div className="py-1">
                                 <button
                                   onClick={(e) => {
@@ -439,7 +439,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                                     handleOpenMedia(step.id, media.id);
                                     setMediaOptionsOpen(null);
                                   }}
-                                  className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  className="flex items-center gap-2 px-4 py-2 text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] w-full text-left"
                                 >
                                   <Video size={16} />
                                   <span>Ver video</span>
@@ -450,7 +450,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                                     handleDirectDownload(media);
                                   }}
                                   disabled={downloadingMedia === media.id}
-                                  className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  className="flex items-center gap-2 px-4 py-2 text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] w-full text-left"
                                 >
                                   {downloadingMedia === media.id ? (
                                     <Loader2 size={16} className="animate-spin" />
@@ -465,7 +465,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                                     setMediaToDelete({ stepId: step.id, mediaId: media.id });
                                     setMediaOptionsOpen(null);
                                   }}
-                                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left"
+                                  className="flex items-center gap-2 px-4 py-2 text-[rgb(var(--error))] hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"
                                 >
                                   <Trash2 size={16} />
                                   <span>Eliminar</span>
@@ -513,14 +513,14 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                   <div className="flex items-center gap-1">
                     <button
                       onClick={handleUpdate}
-                      className="text-green-600 hover:text-green-700 p-2 hover:bg-green-50 rounded-lg"
+                      className="text-[rgb(var(--success))] hover:text-green-700 p-2 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg"
                       title={t('common.save')}
                     >
                       <Check size={20} />
                     </button>
                     <button
                       onClick={handleCancelEdit}
-                      className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg"
+                      className="text-[rgb(var(--error))] hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                       title={t('common.cancel')}
                     >
                       <X size={20} />
@@ -531,24 +531,24 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleEdit(step)}
-                      className="text-blue-600 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"
                       title={t('actions.editStep')}
                     >
                       <Edit2 size={20} />
                     </button>
                     <button
                       onClick={() => setStepToDelete(step)}
-                      className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg"
+                      className="text-[rgb(var(--error))] hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                       title={t('actions.deleteStep')}
                     >
                       <Trash2 size={20} />
                     </button>
                     <button
                       onClick={() => setShowMediaUpload(step.id)}
-                      className="p-2 rounded-lg hover:bg-gray-100"
+                      className="p-2 rounded-lg hover:bg-[rgb(var(--bg-secondary))]"
                       title="Adjuntar archivo"
                     >
-                      <Paperclip size={20} className="text-gray-500" />
+                      <Paperclip size={20} className="text-[rgb(var(--text-secondary))]" />
                     </button>
                   </div>
                 )}
@@ -565,7 +565,7 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
             value={newStep}
             onChange={(e) => setNewStep(e.target.value)}
             placeholder={t('messages.stepPlaceholder')}
-            className="flex-1 px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 px-3 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-md focus:ring-2 focus:ring-[rgb(var(--primary-500))]"
             onKeyPress={(e) => e.key === 'Enter' && addStep()}
             autoFocus
           />
@@ -573,13 +573,13 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
             <button
               onClick={addStep}
               disabled={!newStep.trim()}
-              className="bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[rgb(var(--primary-600))] text-white p-2 rounded-md hover:bg-[rgb(var(--primary-700))] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus size={20} />
             </button>
             <button
               onClick={() => setNewStep('')}
-              className="bg-gray-200 text-gray-600 p-2 rounded-md hover:bg-gray-300"
+              className="bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-secondary))] p-2 rounded-md hover:bg-[rgb(var(--bg-tertiary))]"
             >
               <X size={20} />
             </button>

@@ -281,11 +281,11 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
   };
 
   const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith('image/')) return <Image size={24} className="text-emerald-500" />;
-    if (fileType.startsWith('video/')) return <Video size={24} className="text-purple-500" />;
-    if (fileType.startsWith('application/pdf')) return <FileText size={24} className="text-red-500" />;
-    if (fileType.startsWith('application/msword') || fileType.includes('document')) return <FileText size={24} className="text-blue-500" />;
-    return <File size={24} className="text-gray-500" />;
+    if (fileType.startsWith('image/')) return <Image size={24} className="text-emerald-500 dark:text-emerald-400" />;
+    if (fileType.startsWith('video/')) return <Video size={24} className="text-purple-500 dark:text-purple-400" />;
+    if (fileType.startsWith('application/pdf')) return <FileText size={24} className="text-red-500 dark:text-red-400" />;
+    if (fileType.startsWith('application/msword') || fileType.includes('document')) return <FileText size={24} className="text-blue-500 dark:text-blue-400" />;
+    return <File size={24} className="text-[rgb(var(--text-secondary))]" />;
   };
 
   const formatFileSize = (bytes: number) => {
@@ -329,7 +329,7 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:text-indigo-800 underline break-words"
+              className="text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-700))] underline break-words"
             >
               {segments[i]}
             </a>
@@ -354,29 +354,29 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <div className="p-4 border-b flex justify-between items-center">
+      <div className="bg-[rgb(var(--bg-primary))] rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div className="p-4 border-b border-[rgb(var(--border-primary))] flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-semibold text-gray-900">Notas</h2>
+            <h2 className="text-xl font-semibold text-[rgb(var(--text-primary))]">Notas</h2>
             {isOffline && (
-              <span className="px-2 py-1 text-sm bg-amber-50 text-amber-700 rounded-full">
+              <span className="px-2 py-1 text-sm bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-full">
                 Modo sin conexión
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
             {error && (
-              <span className="text-sm text-red-600">{error}</span>
+              <span className="text-sm text-[rgb(var(--error))]">{error}</span>
             )}
             <button
               onClick={handleSave}
               disabled={isLoading || isSaving}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
                 isSaving
-                  ? 'bg-green-100 text-green-700'
+                  ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300'
                   : isLoading
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                  ? 'bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-tertiary))] cursor-not-allowed'
+                  : 'bg-[rgb(var(--primary-50))] dark:bg-[rgb(var(--primary-900))]/20 text-[rgb(var(--primary-600))] hover:bg-[rgb(var(--primary-100))] dark:hover:bg-[rgb(var(--primary-800))]/30'
               }`}
             >
               {isSaving ? (
@@ -390,20 +390,20 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
             </button>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 p-1"
+              className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] p-1"
             >
               <X size={24} />
             </button>
           </div>
         </div>
 
-        <div className="flex border-b">
+        <div className="flex border-b border-[rgb(var(--border-primary))]">
           <button
             onClick={() => setActiveTab('notes')}
             className={`px-4 py-2 font-medium text-sm ${
               activeTab === 'notes'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'text-[rgb(var(--primary-600))] border-b-2 border-[rgb(var(--primary-600))]'
+                : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]'
             }`}
           >
             Notas
@@ -412,13 +412,13 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
             onClick={() => setActiveTab('files')}
             className={`px-4 py-2 font-medium text-sm flex items-center gap-2 ${
               activeTab === 'files'
-                ? 'text-indigo-600 border-b-2 border-indigo-600'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'text-[rgb(var(--primary-600))] border-b-2 border-[rgb(var(--primary-600))]'
+                : 'text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]'
             }`}
           >
             Archivos
             {files.length > 0 && (
-              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-600 rounded-full text-xs">
+              <span className="px-2 py-0.5 bg-[rgb(var(--primary-100))] dark:bg-[rgb(var(--primary-900))]/20 text-[rgb(var(--primary-600))] rounded-full text-xs">
                 {files.length}
               </span>
             )}
@@ -428,19 +428,19 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
         <div className="flex-1 p-4 overflow-auto">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
-              <Loader2 size={32} className="animate-spin text-indigo-600" />
+              <Loader2 size={32} className="animate-spin text-[rgb(var(--primary-600))]" />
             </div>
           ) : activeTab === 'notes' ? (
             <div className="h-full flex flex-col">
               {/* Botones de modo de visualización */}
               <div className="flex justify-end mb-2">
-                <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
+                <div className="inline-flex rounded-lg border border-[rgb(var(--border-primary))] overflow-hidden">
                   <button
                     onClick={() => setViewMode('edit')}
                     className={`flex items-center gap-1 px-3 py-1.5 text-sm ${
                       viewMode === 'edit' 
-                        ? 'bg-indigo-50 text-indigo-600 font-medium'
-                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                        ? 'bg-[rgb(var(--primary-50))] dark:bg-[rgb(var(--primary-900))]/20 text-[rgb(var(--primary-600))] font-medium'
+                        : 'bg-[rgb(var(--bg-primary))] text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--bg-secondary))]'
                     }`}
                   >
                     <Edit3 size={16} />
@@ -450,8 +450,8 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
                     onClick={() => setViewMode('preview')}
                     className={`flex items-center gap-1 px-3 py-1.5 text-sm ${
                       viewMode === 'preview' 
-                        ? 'bg-indigo-50 text-indigo-600 font-medium'
-                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                        ? 'bg-[rgb(var(--primary-50))] dark:bg-[rgb(var(--primary-900))]/20 text-[rgb(var(--primary-600))] font-medium'
+                        : 'bg-[rgb(var(--bg-primary))] text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--bg-secondary))]'
                     }`}
                   >
                     <Eye size={16} />
@@ -465,14 +465,14 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full h-full min-h-[400px] p-4 border rounded-lg focus:ring-2 focus:ring-indigo-500 resize-none flex-grow"
+                  className="w-full h-full min-h-[400px] p-4 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] border border-[rgb(var(--border-primary))] rounded-lg focus:ring-2 focus:ring-[rgb(var(--primary-500))] resize-none flex-grow"
                   placeholder="Escribe tus notas aquí..."
                   disabled={isLoading}
                 />
               ) : (
-                <div className="w-full h-full min-h-[400px] p-4 border rounded-lg overflow-auto bg-gray-50 flex-grow">
+                <div className="w-full h-full min-h-[400px] p-4 border border-[rgb(var(--border-primary))] rounded-lg overflow-auto bg-[rgb(var(--bg-secondary))] flex-grow">
                   {notes ? renderTextWithLinks(notes) : (
-                    <p className="text-gray-400 italic">No hay contenido para mostrar</p>
+                    <p className="text-[rgb(var(--text-tertiary))] italic">No hay contenido para mostrar</p>
                   )}
                 </div>
               )}
@@ -480,7 +480,7 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
           ) : (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-gray-800">Archivos adjuntos</h3>
+                <h3 className="text-lg font-medium text-[rgb(var(--text-primary))]">Archivos adjuntos</h3>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -493,8 +493,8 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
                   disabled={isUploading}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
                     isUploading
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                      ? 'bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-tertiary))] cursor-not-allowed'
+                      : 'bg-[rgb(var(--primary-600))] text-white hover:bg-[rgb(var(--primary-700))]'
                   }`}
                 >
                   {isUploading ? (
@@ -508,31 +508,31 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
 
               {isUploading && (
                 <div className="mb-4">
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 bg-[rgb(var(--bg-secondary))] rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-indigo-600 transition-all duration-300"
+                      className="h-full bg-[rgb(var(--primary-600))] transition-all duration-300"
                       style={{ width: `${uploadProgress}%` }}
                     ></div>
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-sm text-[rgb(var(--text-secondary))] mt-2">
                     Subiendo... {uploadProgress}%
                   </p>
                 </div>
               )}
 
               {uploadError && (
-                <div className="p-3 bg-red-50 text-red-700 rounded-md mb-4">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 text-[rgb(var(--error))] rounded-md mb-4">
                   {uploadError}
                 </div>
               )}
 
               {files.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-300 rounded-lg">
-                  <File size={48} className="text-gray-400 mb-3" />
-                  <p className="text-gray-600 mb-2">No hay archivos adjuntos</p>
+                <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-[rgb(var(--border-primary))] rounded-lg">
+                  <File size={48} className="text-[rgb(var(--text-tertiary))] mb-3" />
+                  <p className="text-[rgb(var(--text-secondary))] mb-2">No hay archivos adjuntos</p>
                   <button
                     onClick={handleFileSelect}
-                    className="text-indigo-600 hover:text-indigo-700 font-medium"
+                    className="text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-700))] font-medium"
                   >
                     Haga clic para subir
                   </button>
@@ -542,15 +542,15 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
                   {files.map((file) => (
                     <div
                       key={file.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between p-3 bg-[rgb(var(--bg-secondary))] rounded-lg hover:bg-[rgb(var(--bg-tertiary))] transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         {getFileIcon(file.type)}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-sm font-medium text-[rgb(var(--text-primary))] truncate">
                             {file.name}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-[rgb(var(--text-secondary))]">
                             {formatFileSize(file.size)} • {new Date(file.createdAt).toLocaleString()}
                           </p>
                         </div>
@@ -560,7 +560,7 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
                           href={file.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-full"
+                          className="p-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-tertiary))] rounded-full"
                           title="Abrir archivo"
                         >
                           <ExternalLink size={18} />
@@ -568,14 +568,14 @@ export default function NotebookModal({ isOpen, onClose }: NotebookModalProps) {
                         <a
                           href={file.url}
                           download={file.name}
-                          className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-full"
+                          className="p-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-tertiary))] rounded-full"
                           title="Descargar archivo"
                         >
                           <Download size={18} />
                         </a>
                         <button
                           onClick={() => handleDeleteFile(file)}
-                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full"
+                          className="p-2 text-[rgb(var(--error))] hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full"
                           title="Eliminar archivo"
                         >
                           <Trash2 size={18} />

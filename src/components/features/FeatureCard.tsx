@@ -70,13 +70,13 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
     const status = getFeatureStatus();
     switch (status) {
       case 'failing':
-        return 'bg-red-50 border-red-200';
+        return 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800';
       case 'complete':
-        return 'bg-green-50 border-green-200';
+        return 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800';
       case 'in-progress':
-        return 'bg-amber-50 border-amber-200';
+        return 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800';
       default:
-        return 'bg-white border-gray-200';
+        return 'bg-[rgb(var(--bg-primary))] border-[rgb(var(--border-primary))]';
     }
   };
 
@@ -162,13 +162,13 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
 
   if (isExpanded) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-        <div className="min-h-screen w-full flex flex-col pb-8">
-          <div className={`flex-1 ${getStatusStyles()}`}>
-            <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl font-semibold text-indigo-600">#{feature.number}</span>
+      <div className="modal-overlay overflow-y-auto">
+        <div className="min-h-screen w-full flex flex-col pb-8 sm:pb-0 sm:justify-center sm:p-4">
+          <div className={`flex-1 sm:flex-initial sm:max-w-7xl sm:mx-auto w-full ${getStatusStyles()} rounded-t-xl sm:rounded-lg animate-slideUp`}>
+            <div className="p-4 sm:p-6 lg:p-8">
+              <div className="flex justify-between items-start mb-4 sm:mb-6">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-lg sm:text-xl font-semibold text-[rgb(var(--primary-600))]">#{feature.number}</span>
                   <div>
                     {isEditing ? (
                       <div className="flex-1 space-y-2">
@@ -176,20 +176,20 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                          className="w-full px-3 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-md focus:ring-2 focus:ring-[rgb(var(--primary-500))]"
                           placeholder="Nombre de la funcionalidad"
                           autoFocus
                         />
                         <textarea
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
-                          className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500 min-h-[80px] resize-none"
+                          className="w-full px-3 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-md focus:ring-2 focus:ring-[rgb(var(--primary-500))] min-h-[80px] resize-none"
                           placeholder="Descripción (opcional)"
                         />
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={handleNameSubmit}
-                            className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700"
+                            className="px-3 py-1 bg-[rgb(var(--success))] text-white rounded-md hover:bg-green-700"
                           >
                             <div className="flex items-center gap-2">
                               <Check size={16} />
@@ -202,7 +202,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                               setName(feature.name);
                               setDescription(feature.description || '');
                             }}
-                            className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
+                            className="px-3 py-1 bg-[rgb(var(--error))] text-white rounded-md hover:bg-red-700"
                           >
                             <div className="flex items-center gap-2">
                               <X size={16} />
@@ -214,25 +214,25 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                     ) : (
                       <>
                         <div className="flex items-center gap-2">
-                          <h3 className="text-2xl font-bold text-gray-900">{feature.name}</h3>
+                          <h3 className="text-2xl font-bold text-[rgb(var(--text-primary))]">{feature.name}</h3>
                           {!isReadOnly && (
                             <button
                               onClick={() => setIsEditing(true)}
-                              className="text-gray-600 hover:text-indigo-600 p-1 hover:bg-gray-100 rounded-lg"
+                              className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] p-1 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
                               title="Editar funcionalidad"
                             >
                               <Edit2 size={18} />
                             </button>
                           )}
                           {feature.comments.length > 0 && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-indigo-50 rounded-full text-indigo-600">
+                            <div className="flex items-center gap-1 px-2 py-1 bg-[rgb(var(--primary-50))] dark:bg-[rgb(var(--primary-900))]/20 rounded-full text-[rgb(var(--primary-600))]">
                               <MessageSquare size={16} />
                               <span className="text-sm font-medium">{feature.comments.length}</span>
                             </div>
                           )}
                         </div>
                         {feature.description && (
-                          <p className="text-gray-600 mt-2">{feature.description}</p>
+                          <p className="text-[rgb(var(--text-secondary))] mt-2">{feature.description}</p>
                         )}
                       </>
                     )}
@@ -241,7 +241,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsExpanded(false)}
-                    className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg"
+                    className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] p-2 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
                     title="Minimizar"
                   >
                     <Minimize2 size={24} />
@@ -298,7 +298,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3 flex-1">
             {!isEditing && (
-              <div className="text-gray-500 transition-transform duration-200">
+              <div className="text-[rgb(var(--text-secondary))] transition-transform duration-200">
                 {isContentVisible ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
               </div>
             )}
@@ -310,7 +310,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-md focus:ring-2 focus:ring-[rgb(var(--primary-500))]"
                     placeholder="Nombre de la funcionalidad"
                     onClick={(e) => e.stopPropagation()}
                     autoFocus
@@ -318,7 +318,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-500 min-h-[80px] resize-none"
+                    className="w-full px-3 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-md focus:ring-2 focus:ring-[rgb(var(--primary-500))] min-h-[80px] resize-none"
                     placeholder="Descripción (opcional)"
                     onClick={(e) => e.stopPropagation()}
                   />
@@ -328,7 +328,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                         e.stopPropagation();
                         handleNameSubmit();
                       }}
-                      className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700"
+                      className="px-3 py-1 bg-[rgb(var(--success))] text-white rounded-md hover:bg-green-700"
                     >
                       <div className="flex items-center gap-2">
                         <Check size={16} />
@@ -342,7 +342,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
                         setName(feature.name);
                         setDescription(feature.description || '');
                       }}
-                      className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
+                      className="px-3 py-1 bg-[rgb(var(--error))] text-white rounded-md hover:bg-red-700"
                     >
                       <div className="flex items-center gap-2">
                         <X size={16} />
@@ -354,47 +354,47 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
               ) : (
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold text-indigo-600">#{feature.number}</span>
-                    <h4 className="font-medium text-gray-900">{feature.name}</h4>
+                    <span className="text-lg font-semibold text-[rgb(var(--primary-600))]">#{feature.number}</span>
+                    <h4 className="font-medium text-[rgb(var(--text-primary))]">{feature.name}</h4>
                     {!isReadOnly && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsEditing(true);
                         }}
-                        className="text-gray-600 hover:text-indigo-600 p-1 hover:bg-gray-100 rounded-lg"
+                        className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] p-1 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
                         title="Editar funcionalidad"
                       >
                         <Edit2 size={18} />
                       </button>
                     )}
                     {getMediaCount(feature.steps) > 0 && (
-                      <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 rounded-full text-emerald-600">
+                      <div className="flex items-center gap-1 px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded-full text-emerald-600 dark:text-emerald-400">
                         <Image size={16} />
                         <span className="text-sm font-medium">{getMediaCount(feature.steps)}</span>
                       </div>
                     )}
                     {feature.comments.length > 0 && (
-                      <div className="flex items-center gap-1 px-2 py-1 bg-indigo-50 rounded-full text-indigo-600">
+                      <div className="flex items-center gap-1 px-2 py-1 bg-[rgb(var(--primary-50))] dark:bg-[rgb(var(--primary-900))]/20 rounded-full text-[rgb(var(--primary-600))]">
                         <MessageSquare size={16} />
                         <span className="text-sm font-medium">{feature.comments.length}</span>
                       </div>
                     )}
                   </div>
                   {isContentVisible && feature.description && (
-                    <p className="text-sm text-gray-600 mt-2">{feature.description}</p>
+                    <p className="text-sm text-[rgb(var(--text-secondary))] mt-2">{feature.description}</p>
                   )}
                 </div>
               )}
               <div className="flex gap-4 mt-1 text-sm">
-                <span className="text-gray-600">{feature.steps.length} pasos</span>
+                <span className="text-[rgb(var(--text-secondary))]">{feature.steps.length} pasos</span>
                 {feature.steps.filter(s => s.status === 'working').length > 0 && (
-                  <span className="text-green-600">
+                  <span className="text-[rgb(var(--success))]">
                     {feature.steps.filter(s => s.status === 'working').length} funcionando
                   </span>
                 )}
                 {feature.steps.filter(s => s.status === 'not_working').length > 0 && (
-                  <span className="text-red-600">
+                  <span className="text-[rgb(var(--error))]">
                     {feature.steps.filter(s => s.status === 'not_working').length} no funcionando
                   </span>
                 )}
@@ -405,7 +405,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="text-gray-600 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg"
+              className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] p-2 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
               title="Historial de verificaciones"
             >
               <History size={20} />
@@ -421,7 +421,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
             )}
             <button
               onClick={() => setIsExpanded(true)}
-              className="text-gray-600 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg"
+              className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] p-2 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
               title={isExpanded ? 'Minimizar' : 'Maximizar'}
             >
               <Maximize2 size={20} />

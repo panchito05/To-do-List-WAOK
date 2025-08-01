@@ -37,6 +37,7 @@ export interface Team {
   name: string;
   order: number;
   features: Feature[];
+  isPinned?: boolean;
 }
 
 export interface Verification {

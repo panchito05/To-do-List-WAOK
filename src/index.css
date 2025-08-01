@@ -1,3 +1,256 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Color scheme - Light mode */
+  --primary-50: 238, 242, 255;
+  --primary-100: 224, 231, 255;
+  --primary-200: 199, 210, 254;
+  --primary-300: 165, 180, 252;
+  --primary-400: 129, 140, 248;
+  --primary-500: 99, 102, 241;
+  --primary-600: 79, 70, 229;
+  --primary-700: 67, 56, 202;
+  --primary-800: 55, 48, 163;
+  --primary-900: 49, 46, 129;
+  
+  --bg-primary: 255, 255, 255;
+  --bg-secondary: 249, 250, 251;
+  --bg-tertiary: 243, 244, 246;
+  
+  --text-primary: 17, 24, 39;
+  --text-secondary: 75, 85, 99;
+  --text-tertiary: 156, 163, 175;
+  
+  --border-primary: 229, 231, 235;
+  --border-secondary: 209, 213, 219;
+  
+  --success: 34, 197, 94;
+  --warning: 245, 158, 11;
+  --error: 239, 68, 68;
+  
+  /* Touch target sizes */
+  --touch-target-min: 44px;
+  --touch-target-sm: 36px;
+  
+  /* Spacing scale */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Transition timings */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  
+  /* Z-index scale */
+  --z-dropdown: 10;
+  --z-modal: 50;
+  --z-notification: 60;
+}
+
+[data-theme="dark"] {
+  --bg-primary: 17, 24, 39;
+  --bg-secondary: 31, 41, 55;
+  --bg-tertiary: 55, 65, 81;
+  
+  --text-primary: 243, 244, 246;
+  --text-secondary: 209, 213, 219;
+  --text-tertiary: 156, 163, 175;
+  
+  --border-primary: 55, 65, 81;
+  --border-secondary: 75, 85, 99;
+  
+  --primary-50: 55, 48, 163;
+  --primary-100: 67, 56, 202;
+  --primary-200: 79, 70, 229;
+  --primary-300: 99, 102, 241;
+  --primary-400: 129, 140, 248;
+  --primary-500: 165, 180, 252;
+  --primary-600: 199, 210, 254;
+  --primary-700: 224, 231, 255;
+  --primary-800: 238, 242, 255;
+  --primary-900: 245, 247, 255;
+}
+
+@layer base {
+  body {
+    @apply bg-[rgb(var(--bg-primary))] text-[rgb(var(--text-primary))];
+    @apply transition-colors duration-200;
+  }
+  
+  /* Ensure minimum touch target sizes */
+  button, 
+  a,
+  input[type="checkbox"],
+  input[type="radio"],
+  select,
+  [role="button"] {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+    @apply relative;
+  }
+  
+  /* Smaller touch targets for compact UI elements */
+  .touch-target-sm {
+    min-height: var(--touch-target-sm) !important;
+    min-width: var(--touch-target-sm) !important;
+  }
+  
+  /* Improve focus visibility */
+  *:focus {
+    @apply outline-none;
+  }
+  
+  *:focus-visible {
+    @apply ring-2 ring-[rgb(var(--primary-500))] ring-offset-2 ring-offset-[rgb(var(--bg-primary))];
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Prevent text selection on buttons */
+  button {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+@layer components {
+  /* Primary button styles */
+  .btn-primary {
+    @apply bg-[rgb(var(--primary-600))] text-white;
+    @apply hover:bg-[rgb(var(--primary-700))] active:bg-[rgb(var(--primary-800))];
+    @apply px-6 py-3 rounded-lg font-medium;
+    @apply transition-all duration-200;
+    @apply shadow-sm hover:shadow-md active:shadow-sm;
+    @apply transform active:scale-95;
+    @apply flex items-center justify-center gap-2;
+    min-height: var(--touch-target-min);
+  }
+  
+  /* Secondary button styles */
+  .btn-secondary {
+    @apply bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))];
+    @apply hover:bg-[rgb(var(--bg-tertiary))] active:bg-[rgb(var(--border-primary))];
+    @apply px-6 py-3 rounded-lg font-medium;
+    @apply transition-all duration-200;
+    @apply border border-[rgb(var(--border-primary))];
+    @apply transform active:scale-95;
+    @apply flex items-center justify-center gap-2;
+    min-height: var(--touch-target-min);
+  }
+  
+  /* Ghost button for less prominent actions */
+  .btn-ghost {
+    @apply text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))];
+    @apply hover:bg-[rgb(var(--bg-secondary))];
+    @apply px-4 py-2 rounded-lg;
+    @apply transition-all duration-200;
+    @apply flex items-center justify-center gap-2;
+    min-height: var(--touch-target-sm);
+  }
+  
+  /* Compact ghost button for tight spaces */
+  .btn-ghost.touch-target-sm {
+    @apply px-2 sm:px-3;
+    @apply gap-1 sm:gap-2;
+  }
+  
+  /* Card component */
+  .card {
+    @apply bg-[rgb(var(--bg-primary))] rounded-xl;
+    @apply border border-[rgb(var(--border-primary))];
+    @apply shadow-sm hover:shadow-lg;
+    @apply transition-all duration-300;
+  }
+  
+  /* Modal overlay with blur */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+    @apply z-[var(--z-modal)];
+    @apply animate-fadeIn;
+  }
+  
+  /* Skeleton loader */
+  .skeleton {
+    @apply bg-[rgb(var(--bg-tertiary))] rounded;
+    @apply animate-pulse;
+    @apply relative overflow-hidden;
+  }
+  
+  .skeleton::after {
+    content: "";
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    @apply animate-shimmer;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn var(--transition-base) ease-out;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp var(--transition-slow) ease-out;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Responsive text utilities */
+  .text-responsive {
+    @apply text-sm sm:text-base;
+  }
+  
+  .heading-responsive {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+  
+  /* Safe area for mobile devices */
+  .safe-area-inset {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

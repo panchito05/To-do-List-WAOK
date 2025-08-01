@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Copy, Edit2, Check, X, Plus, RefreshCw, Search, ChevronDown, GripVertical, Maximize2, Minimize2 } from 'lucide-react';
+import { Trash2, Copy, Edit2, Check, X, RefreshCw, Search, ChevronDown, GripVertical, Maximize2, Minimize2, Pin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Team, Feature, VerificationStatus } from '../types';
 import { useTeams } from '../context/TeamsContext';
@@ -12,10 +12,11 @@ interface TeamSectionProps {
   onDelete: () => void;
   onUpdateName: (teamId: number, newName: string) => void;
   onUpdateTeam: (teamId: number, updatedTeam: Team) => void;
+  onTogglePin?: (teamId: number) => void;
   isReadOnly?: boolean;
 }
 
-export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName, onUpdateTeam, isReadOnly = false }: TeamSectionProps) {
+export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName, onUpdateTeam, onTogglePin, isReadOnly = false }: TeamSectionProps) {
   const { t } = useTranslation();
   const { addGlobalVerification } = useTeams();
   const [isEditing, setIsEditing] = useState(false);
@@ -156,18 +157,18 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
     return (
       <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
         <div className="min-h-screen w-full flex flex-col pb-8">
-          <div className="bg-white flex-1">
+          <div className="bg-[rgb(var(--bg-primary))] flex-1">
             <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl font-semibold text-indigo-600">#{team.id}</span>
+                  <span className="text-xl font-semibold text-[rgb(var(--primary-600))]">#{team.id}</span>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">{team.name}</h3>
+                    <h3 className="text-2xl font-bold text-[rgb(var(--text-primary))]">{team.name}</h3>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsFullscreen(false)}
-                  className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg"
+                  className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] p-2 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
                   title="Minimizar"
                 >
                   <Minimize2 size={24} />
@@ -180,12 +181,12 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar funcionalidades, pasos o comentarios..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-10 pr-4 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-lg focus:ring-2 focus:ring-[rgb(var(--primary-500))]"
                 />
-                <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[rgb(var(--text-tertiary))]" />
                 {searchQuery && (
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+                    <span className="px-2 py-1 bg-[rgb(var(--primary-100))] text-[rgb(var(--primary-700))] rounded-full text-sm">
                       {filteredFeatures.length} {filteredFeatures.length === 1 ? 'resultado' : 'resultados'}
                     </span>
                   </div>
@@ -209,17 +210,32 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md transition-all hover:shadow-lg border-4 border-black relative">
-      {/* BOTÓN EXPANDIR - ESQUINA SUPERIOR DERECHA */}
-      {!isReadOnly && (
-        <button
-          onClick={() => setIsFullscreen(true)}
-          className="absolute top-4 right-4 z-10 flex items-center gap-1 text-white bg-green-500 hover:bg-green-600 p-2 rounded-lg shadow-md transition-colors"
-          title="Expandir"
-        >
-          <Maximize2 size={20} />
-        </button>
-      )}
+    <div className={`card relative ${team.isPinned ? 'ring-2 ring-[rgb(var(--primary-500))]' : ''}`}>
+      {/* BOTONES ESQUINA SUPERIOR DERECHA */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        {onTogglePin && (
+          <button
+            onClick={() => onTogglePin(team.id)}
+            className={`p-2 rounded-lg transition-colors shadow-md ${
+              team.isPinned 
+                ? 'bg-[rgb(var(--primary-600))] text-white hover:bg-[rgb(var(--primary-700))]' 
+                : 'bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--bg-tertiary))] hover:text-[rgb(var(--text-primary))]'
+            }`}
+            title={team.isPinned ? 'Desfijar' : 'Fijar'}
+          >
+            <Pin size={20} className={team.isPinned ? 'fill-current' : ''} />
+          </button>
+        )}
+        {!isReadOnly && (
+          <button
+            onClick={() => setIsFullscreen(true)}
+            className="flex items-center gap-1 text-white bg-[rgb(var(--success))] hover:bg-green-600 p-2 rounded-lg shadow-md transition-colors"
+            title="Expandir"
+          >
+            <Maximize2 size={20} />
+          </button>
+        )}
+      </div>
       
       <div className="p-4">
         {/* NOMBRE DEL EQUIPO - SOLO ARRIBA */}
@@ -230,12 +246,12 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
                 type="text"
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
-                className="flex-1 px-3 py-2 text-xl font-semibold border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 px-3 py-2 text-xl font-semibold bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] border border-[rgb(var(--border-primary))] rounded focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary-500))]"
                 autoFocus
               />
               <button
                 onClick={handleNameSubmit}
-                className="text-green-600 hover:text-green-700 p-2"
+                className="text-[rgb(var(--success))] hover:text-green-700 p-2 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg"
               >
                 <Check size={20} />
               </button>
@@ -244,13 +260,13 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
                   setIsEditing(false);
                   setEditedName(team.name);
                 }}
-                className="text-red-600 hover:text-red-700 p-2"
+                className="text-[rgb(var(--error))] hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
               >
                 <X size={20} />
               </button>
             </div>
           ) : (
-            <h3 className="text-xl font-semibold text-gray-800">{team.name}</h3>
+            <h3 className="text-xl font-semibold text-[rgb(var(--text-primary))]">{team.name}</h3>
           )}
         </div>
 
@@ -258,28 +274,28 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <div 
-              className="w-8 h-8 flex items-center justify-center cursor-move bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="w-10 h-10 flex items-center justify-center cursor-move bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--bg-tertiary))] rounded-lg transition-colors"
               title="Arrastrar para reordenar"
             >
-              <GripVertical size={20} className="text-gray-600" />
+              <GripVertical size={20} className="text-[rgb(var(--text-secondary))]" />
             </div>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className={`p-2 hover:bg-gray-100 rounded-lg transition-all duration-200 transform ${
+              className={`p-2 hover:bg-[rgb(var(--bg-secondary))] rounded-lg transition-all duration-200 transform ${
                 isReadOnly ? 'cursor-default' : ''
               }`}
               disabled={isReadOnly}
             >
               <ChevronDown
                 size={20}
-                className={`text-gray-500 transition-transform duration-200 ${
+                className={`text-[rgb(var(--text-secondary))] transition-transform duration-200 ${
                   isExpanded ? 'transform rotate-0' : 'transform -rotate-90'
                 }`}
               />
             </button>
             <button
               onClick={() => setShowDeleteConfirmation(true)}
-              className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg"
+              className="text-[rgb(var(--error))] hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
               title="Eliminar equipo"
             >
               <Trash2 size={20} />
@@ -287,10 +303,10 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
           </div>
           
           {!isReadOnly && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={() => setShowResetConfirmation(true)}
-                className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 p-2 hover:bg-indigo-50 rounded-lg text-sm"
+                className="btn-ghost touch-target-sm"
                 title="Reiniciar todas las verificaciones"
               >
                 <RefreshCw size={20} />
@@ -298,7 +314,7 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
               </button>
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1 text-gray-600 hover:text-gray-700 p-2 hover:bg-gray-100 rounded-lg text-sm"
+                className="btn-ghost touch-target-sm"
                 title="Editar nombre"
               >
                 <Edit2 size={20} />
@@ -306,7 +322,7 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
               </button>
               <button
                 onClick={onDuplicate}
-                className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 p-2 hover:bg-indigo-50 rounded-lg text-sm"
+                className="btn-ghost touch-target-sm text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-700))]"
                 title="Duplicar equipo"
               >
                 <Copy size={20} />
@@ -324,12 +340,12 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar funcionalidades, pasos o comentarios..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-10 pr-4 py-3 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] placeholder-[rgb(var(--text-tertiary))] border border-[rgb(var(--border-primary))] rounded-lg focus:ring-2 focus:ring-[rgb(var(--primary-500))] focus:border-transparent transition-all"
             />
-            <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[rgb(var(--text-tertiary))]" />
             {searchQuery && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 animate-fadeIn">
+                <span className="px-2 py-1 bg-[rgb(var(--primary-100))] text-[rgb(var(--primary-700))] rounded-full text-sm font-medium">
                   {filteredFeatures.length} {filteredFeatures.length === 1 ? 'resultado' : 'resultados'}
                 </span>
               </div>

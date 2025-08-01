@@ -59,7 +59,9 @@
     "markAsWorking": "Marcar como Funcionando",
     "markAsNotWorking": "Marcar como No Funcionando",
     "importTeam": "Importar Equipo",
-    "exportTeam": "Exportar Equipo"
+    "exportTeam": "Exportar Equipo",
+    "delete": "Eliminar",
+    "duplicate": "Duplicar"
   },
   "messages": {
     "confirmDelete": "¿Estás seguro de que deseas eliminar esto?",

@@ -3,6 +3,7 @@ import { ClipboardCheck, History, Settings, Download, Upload, GitCompare } from 
 import GlobalVerificationHistory from './GlobalVerificationHistory';
 import TeamComparisonModal from './TeamComparisonModal';
 import NotebookModal from './NotebookModal';
+import ThemeToggle from './ThemeToggle';
 import { Team } from '../types';
 import { useTranslation } from 'react-i18next';
 
@@ -88,39 +89,41 @@ function Header({ teams, onImportTeam }: HeaderProps) {
 
   return (
     <>
-      <header className="bg-white shadow-sm backdrop-blur-sm bg-white/90 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-6">
+      <header className="bg-[rgb(var(--bg-primary))]/95 backdrop-blur-sm shadow-sm sticky top-0 z-40 border-b border-[rgb(var(--border-primary))]">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <button
                 onClick={() => setShowNotebook(true)}
-                className="p-2 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                className="p-2 sm:p-3 bg-[rgb(var(--primary-50))] rounded-lg hover:bg-[rgb(var(--primary-100))] transition-colors"
                 title="Abrir notas"
               >
-                <ClipboardCheck size={32} className="text-indigo-600" />
+                <ClipboardCheck size={28} className="text-[rgb(var(--primary-600))] sm:w-8 sm:h-8" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{t('common.appTitle')}</h1>
-                <p className="text-gray-600">{t('common.appDescription')}</p>
+                <h1 className="heading-responsive font-bold text-[rgb(var(--text-primary))]">{t('common.appTitle')}</h1>
+                <p className="text-[rgb(var(--text-secondary))] text-sm sm:text-base">{t('common.appDescription')}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
+              <ThemeToggle />
+              
               <div className="relative">
                 <button
                   onClick={() => setShowSettings(!showSettings)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-secondary))] rounded-lg hover:bg-[rgb(var(--bg-tertiary))] transition-colors"
                 >
                   <Settings size={20} />
                   <span>{t('common.settings')}</span>
                 </button>
 
                 {showSettings && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1">
-                    <div className="px-4 py-2 hover:bg-gray-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-[rgb(var(--bg-primary))] rounded-lg shadow-lg border border-[rgb(var(--border-primary))] py-1 animate-slideUp">
+                    <div className="px-4 py-2 hover:bg-[rgb(var(--bg-secondary))]">
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 rounded w-full"
+                        className="flex items-center gap-2 px-3 py-1 text-sm text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] rounded w-full"
                       >
                         <Upload size={16} />
                         <span>{t('actions.importTeam')}</span>
@@ -128,11 +131,11 @@ function Header({ teams, onImportTeam }: HeaderProps) {
                     </div>
                     
                     {teams.map(team => (
-                      <div key={team.id} className="px-4 py-2 hover:bg-gray-50">
-                        <p className="text-sm font-medium text-gray-900 mb-2">{team.name}</p>
+                      <div key={team.id} className="px-4 py-2 hover:bg-[rgb(var(--bg-secondary))]">
+                        <p className="text-sm font-medium text-[rgb(var(--text-primary))] mb-2">{team.name}</p>
                         <button
                           onClick={() => handleExportTeam(team)}
-                          className="flex items-center gap-2 px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 rounded w-full"
+                          className="flex items-center gap-2 px-3 py-1 text-sm text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] rounded w-full"
                         >
                           <Download size={16} />
                           <span>{t('actions.exportTeam')}</span>
@@ -145,18 +148,18 @@ function Header({ teams, onImportTeam }: HeaderProps) {
 
               <button
                 onClick={() => setShowComparison(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100 transition-colors"
+                className="btn-secondary hidden sm:flex"
               >
                 <GitCompare size={20} />
-                <span>{t('common.compareTeams')}</span>
+                <span className="hidden lg:inline">{t('common.compareTeams')}</span>
               </button>
 
               <button
                 onClick={() => setShowHistory(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
+                className="btn-primary"
               >
                 <History size={20} />
-                <span>{t('common.globalHistory')}</span>
+                <span className="hidden sm:inline">{t('common.globalHistory')}</span>
               </button>
             </div>
           </div>

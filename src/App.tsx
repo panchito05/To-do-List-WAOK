@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { Trash2, Copy, Edit2, Plus, RefreshCw, Archive, AlertTriangle, GripVertical } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Trash2, Copy, Plus, RefreshCw, Archive, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import TeamSection from './components/TeamSection';
 import Header from './components/Header';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import DuplicateTeamModal from './components/DuplicateTeamModal';
+import SkeletonLoader from './components/SkeletonLoader';
+import SwipeableCard from './components/SwipeableCard';
+import ViewSelector from './components/ViewSelector';
 import { Team } from './types';
 import { TeamsProvider, useTeams } from './context/TeamsContext';
 
@@ -12,30 +15,47 @@ function AppContent() {
   const { t } = useTranslation();
   const { teams, setTeams, isLoading, isConnected } = useTeams();
   const [deletedTeams, setDeletedTeams] = useState<Team[]>([]);
-  const [draggedTeam, setDraggedTeam] = useState<Team | null>(null);
+  const [, setDraggedTeam] = useState<Team | null>(null);
   const [teamToDuplicate, setTeamToDuplicate] = useState<Team | null>(null);
+  const [viewCount, setViewCount] = useState<number>(() => {
+    const saved = localStorage.getItem('teamViewCount');
+    return saved ? parseInt(saved, 10) : 2;
+  });
+
+  // Persist view count
+  useEffect(() => {
+    localStorage.setItem('teamViewCount', viewCount.toString());
+  }, [viewCount]);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-[rgb(var(--bg-secondary))]">
+        <Header teams={[]} onImportTeam={() => {}} />
+        <main className="container mx-auto px-4 py-4 sm:py-8">
+          <div className="flex justify-between items-center mb-6">
+            <SkeletonLoader variant="button" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <SkeletonLoader variant="team" count={3} />
+          </div>
+        </main>
       </div>
     );
   }
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50">
-        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-          <div className="flex items-center gap-3 text-amber-600 mb-4">
+      <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--bg-secondary))]">
+        <div className="card p-8 max-w-md w-full mx-4 animate-slideUp">
+          <div className="flex items-center gap-3 text-[rgb(var(--warning))] mb-4">
             <AlertTriangle size={24} />
             <h2 className="text-xl font-semibold">Database Connection Required</h2>
           </div>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[rgb(var(--text-secondary))] mb-6">
             Please click the "Connect to Supabase" button in the top right corner to set up your database connection. This is required for the application to function properly.
           </p>
-          <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-            <p className="text-sm text-amber-700">
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+            <p className="text-sm text-amber-700 dark:text-amber-300">
               Once connected, the application will automatically load and you can start managing your teams and features.
             </p>
           </div>
@@ -182,30 +202,55 @@ function AppContent() {
     ));
   };
 
+  const togglePinTeam = (teamId: number) => {
+    setTeams(teams.map(team => 
+      team.id === teamId ? { ...team, isPinned: !team.isPinned } : team
+    ));
+  };
+
+  // Filter teams based on view count and pinned status
+  const getVisibleTeams = () => {
+    // First, separate pinned and unpinned teams
+    const pinnedTeams = teams.filter(team => team.isPinned);
+    const unpinnedTeams = teams.filter(team => !team.isPinned);
+    
+    // Sort unpinned teams by most recent (highest ID first)
+    const sortedUnpinnedTeams = [...unpinnedTeams].sort((a, b) => b.id - a.id);
+    
+    // Combine pinned first, then most recent unpinned
+    const orderedTeams = [...pinnedTeams, ...sortedUnpinnedTeams];
+    
+    // Return only the number of teams based on viewCount
+    return orderedTeams.slice(0, viewCount);
+  };
+
+  const visibleTeams = getVisibleTeams();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50">
+    <div className="min-h-screen bg-[rgb(var(--bg-secondary))]">
       <Header 
         teams={teams} 
         onImportTeam={handleImportTeam}
       />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-          <div className="flex items-center gap-4">
+      <main className="container mx-auto px-4 py-4 sm:py-8 safe-area-inset">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={addTeam}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
+              className="btn-primary flex-1 sm:flex-none"
             >
               <Plus size={20} />
               {t('actions.addTeam')}
             </button>
+            <ViewSelector currentView={viewCount} onViewChange={setViewCount} />
             <LanguageSwitcher />
           </div>
           
           {deletedTeams.length > 0 && (
             <button
               onClick={() => setDeletedTeams([])}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 text-red-600 hover:text-red-700 px-6 py-3"
+              className="btn-ghost text-[rgb(var(--error))] hover:text-[rgb(var(--error))] hover:bg-red-50"
             >
               <Trash2 size={20} />
               {t('actions.emptyTrash')}
@@ -213,44 +258,77 @@ function AppContent() {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-8">
-          {teams.map((team, index) => (
-            <div 
-              key={team.id} 
-              className="w-full lg:w-[calc(50%-1rem)] team-card transition-all duration-200"
-              draggable
-              onDragStart={(e) => handleDragStart(e, team, index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, index)}
-            >
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          {visibleTeams.map((team, index) => {
+            const teamElement = (
               <TeamSection
                 team={team}
                 onDuplicate={() => setTeamToDuplicate(team)}
                 onDelete={() => deleteTeam(team.id)}
                 onUpdateName={updateTeamName}
                 onUpdateTeam={updateTeam}
+                onTogglePin={togglePinTeam}
               />
-            </div>
-          ))}
+            );
+
+            return (
+              <div 
+                key={team.id} 
+                className="team-card transition-all duration-200 animate-slideUp"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                {/* Show swipeable card only on mobile */}
+                <div className="block md:hidden">
+                  <SwipeableCard
+                    onSwipeLeft={() => deleteTeam(team.id)}
+                    onSwipeRight={() => setTeamToDuplicate(team)}
+                    leftAction={{
+                      icon: <Trash2 size={24} />,
+                      color: 'bg-red-500',
+                      label: t('actions.delete')
+                    }}
+                    rightAction={{
+                      icon: <Copy size={24} />,
+                      color: 'bg-[rgb(var(--primary-600))]',
+                      label: t('actions.duplicate')
+                    }}
+                  >
+                    {teamElement}
+                  </SwipeableCard>
+                </div>
+                
+                {/* Desktop version with drag and drop */}
+                <div 
+                  className="hidden md:block"
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, team, index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, index)}
+                >
+                  {teamElement}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {deletedTeams.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
-              <Archive size={24} className="text-gray-600" />
+          <div className="mt-8 sm:mt-16">
+            <h2 className="heading-responsive font-semibold text-[rgb(var(--text-primary))] mb-6 flex items-center gap-3">
+              <Archive size={24} className="text-[rgb(var(--text-secondary))]" />
               {t('common.trash')}
             </h2>
-            <div className="flex flex-wrap gap-8">
-              {deletedTeams.map(team => (
-                <div key={team.id} className="w-full lg:w-[calc(50%-1rem)]">
-                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow opacity-75">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {deletedTeams.map((team, index) => (
+                <div key={team.id} className="animate-slideUp" style={{ animationDelay: `${index * 50}ms` }}>
+                  <div className="card p-6 opacity-75">
                     <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-medium text-gray-600">{team.name}</h3>
+                      <h3 className="text-lg font-medium text-[rgb(var(--text-secondary))]">{team.name}</h3>
                       <button
                         onClick={() => restoreTeam(team.id)}
-                        className="text-indigo-600 hover:text-indigo-700 p-2 hover:bg-indigo-50 rounded-full transition-colors"
+                        className="btn-ghost text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-700))]"
                         title={t('actions.restoreTeam')}
                       >
                         <RefreshCw size={20} />
