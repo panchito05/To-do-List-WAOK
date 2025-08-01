@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ClipboardCheck, History, Settings, Download, Upload, GitCompare } from 'lucide-react';
-import GlobalVerificationHistory from './GlobalVerificationHistory';
-import TeamComparisonModal from './TeamComparisonModal';
+import { ClipboardCheck, Settings, Download, Upload } from 'lucide-react';
 import NotebookModal from './NotebookModal';
 import ThemeToggle from './ThemeToggle';
 import { Team } from '../types';
@@ -13,9 +11,7 @@ interface HeaderProps {
 }
 
 function Header({ teams, onImportTeam }: HeaderProps) {
-  const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showComparison, setShowComparison] = useState(false);
   const [showNotebook, setShowNotebook] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
@@ -119,48 +115,91 @@ function Header({ teams, onImportTeam }: HeaderProps) {
                 </button>
 
                 {showSettings && (
-                  <div className="absolute right-0 mt-2 w-48 bg-[rgb(var(--bg-primary))] rounded-lg shadow-lg border border-[rgb(var(--border-primary))] py-1 animate-slideUp">
-                    <div className="px-4 py-2 hover:bg-[rgb(var(--bg-secondary))]">
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-3 py-1 text-sm text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] rounded w-full"
-                      >
-                        <Upload size={16} />
-                        <span>{t('actions.importTeam')}</span>
-                      </button>
-                    </div>
-                    
-                    {teams.map(team => (
-                      <div key={team.id} className="px-4 py-2 hover:bg-[rgb(var(--bg-secondary))]">
-                        <p className="text-sm font-medium text-[rgb(var(--text-primary))] mb-2">{team.name}</p>
-                        <button
-                          onClick={() => handleExportTeam(team)}
-                          className="flex items-center gap-2 px-3 py-1 text-sm text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] rounded w-full"
-                        >
-                          <Download size={16} />
-                          <span>{t('actions.exportTeam')}</span>
-                        </button>
+                  <div className="absolute right-0 mt-2 w-64 bg-[rgb(var(--bg-primary))] rounded-lg shadow-lg border border-[rgb(var(--border-primary))] py-2 animate-slideUp">
+                    {/* Import/Export Actions Section */}
+                    <div>
+                      <div className="px-4 py-2">
+                        <h3 className="text-xs font-semibold text-[rgb(var(--text-secondary))] uppercase tracking-wide">
+                          {t('common.import')} / {t('common.export')}
+                        </h3>
                       </div>
-                    ))}
+                      
+                      <div className="px-2 space-y-1">
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex items-center gap-3 px-3 py-2 text-sm text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] hover:text-[rgb(var(--primary-600))] rounded-md w-full transition-colors"
+                        >
+                          <Upload size={16} className="text-[rgb(var(--text-secondary))]" />
+                          <span>{t('actions.importTeam')}</span>
+                        </button>
+                        
+                        {teams.length > 0 && (
+                          <button
+                            onClick={() => {
+                              teams.forEach(team => handleExportTeam(team));
+                              setShowSettings(false);
+                            }}
+                            className="flex items-center gap-3 px-3 py-2 text-sm text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] hover:text-[rgb(var(--primary-600))] rounded-md w-full transition-colors"
+                          >
+                            <Download size={16} className="text-[rgb(var(--text-secondary))]" />
+                            <span>Export All Teams</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    {teams.length > 0 && (
+                      <div className="my-2">
+                        <div className="border-t border-[rgb(var(--border-primary))]"></div>
+                      </div>
+                    )}
+
+                    {/* Individual Team Exports Section */}
+                    {teams.length > 0 && (
+                      <div>
+                        <div className="px-4 py-2">
+                          <h3 className="text-xs font-semibold text-[rgb(var(--text-secondary))] uppercase tracking-wide">
+                            Export Individual Teams
+                          </h3>
+                        </div>
+                        
+                        <div className="px-2 space-y-1 max-h-48 overflow-y-auto">
+                          {teams.map(team => (
+                            <div key={team.id} className="group">
+                              <button
+                                onClick={() => {
+                                  handleExportTeam(team);
+                                  setShowSettings(false);
+                                }}
+                                className="flex items-center justify-between px-3 py-2 text-sm text-[rgb(var(--text-primary))] hover:bg-[rgb(var(--bg-secondary))] rounded-md w-full transition-colors"
+                              >
+                                <div className="flex items-center gap-3 min-w-0 flex-1">
+                                  <Download size={14} className="text-[rgb(var(--text-secondary))] group-hover:text-[rgb(var(--primary-600))] transition-colors flex-shrink-0" />
+                                  <span className="truncate font-medium">{team.name}</span>
+                                </div>
+                                <span className="text-xs text-[rgb(var(--text-secondary))] ml-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  Export
+                                </span>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Empty State */}
+                    {teams.length === 0 && (
+                      <div className="px-4 py-6 text-center">
+                        <p className="text-sm text-[rgb(var(--text-secondary))]">
+                          No teams available to export
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              <button
-                onClick={() => setShowComparison(true)}
-                className="btn-secondary hidden sm:flex"
-              >
-                <GitCompare size={20} />
-                <span className="hidden lg:inline">{t('common.compareTeams')}</span>
-              </button>
-
-              <button
-                onClick={() => setShowHistory(true)}
-                className="btn-primary"
-              >
-                <History size={20} />
-                <span className="hidden sm:inline">{t('common.globalHistory')}</span>
-              </button>
             </div>
           </div>
         </div>
@@ -173,14 +212,6 @@ function Header({ teams, onImportTeam }: HeaderProps) {
         accept=".json"
         className="hidden"
       />
-
-      {showHistory && (
-        <GlobalVerificationHistory onClose={() => setShowHistory(false)} />
-      )}
-      
-      {showComparison && (
-        <TeamComparisonModal onClose={() => setShowComparison(false)} isOpen={showComparison} />
-      )}
 
       <NotebookModal
         isOpen={showNotebook}
