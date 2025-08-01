@@ -17,8 +17,9 @@ function AppContent() {
   const [deletedTeams, setDeletedTeams] = useState<Team[]>([]);
   const [, setDraggedTeam] = useState<Team | null>(null);
   const [teamToDuplicate, setTeamToDuplicate] = useState<Team | null>(null);
-  const [viewCount, setViewCount] = useState<number>(() => {
+  const [viewCount, setViewCount] = useState<number | 'all'>(() => {
     const saved = localStorage.getItem('teamViewCount');
+    if (saved === 'all') return 'all';
     return saved ? parseInt(saved, 10) : 1;
   });
 
@@ -221,6 +222,9 @@ function AppContent() {
     const orderedTeams = [...pinnedTeams, ...sortedUnpinnedTeams];
     
     // Return only the number of teams based on viewCount
+    if (viewCount === 'all') {
+      return orderedTeams;
+    }
     return orderedTeams.slice(0, viewCount);
   };
 
@@ -235,8 +239,8 @@ function AppContent() {
         return 'grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8';
       case 3:
         return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8';
-      case 4:
-        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8';
+      case 'all':
+        return 'grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8';
       default:
         return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8';
     }

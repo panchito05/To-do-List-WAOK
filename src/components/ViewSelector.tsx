@@ -1,13 +1,15 @@
 import React from 'react';
 import { LayoutGrid } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ViewSelectorProps {
-  currentView: number;
-  onViewChange: (view: number) => void;
+  currentView: number | 'all';
+  onViewChange: (view: number | 'all') => void;
 }
 
 const ViewSelector: React.FC<ViewSelectorProps> = ({ currentView, onViewChange }) => {
-  const viewOptions = [1, 2, 3, 4] as const;
+  const { t } = useTranslation();
+  const viewOptions = [1, 2, 3, 'all'] as const;
 
   return (
     <div className="flex items-center gap-3">
@@ -37,7 +39,7 @@ const ViewSelector: React.FC<ViewSelectorProps> = ({ currentView, onViewChange }
             aria-pressed={currentView === view}
             role="radio"
           >
-            {view}
+            {view === 'all' ? t('common.all') : view}
           </button>
         ))}
       </div>

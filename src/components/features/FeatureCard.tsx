@@ -163,7 +163,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
   if (isExpanded) {
     return (
       <div className="modal-overlay overflow-y-auto">
-        <div className="min-h-screen w-full flex flex-col pb-8 sm:pb-0 sm:justify-center sm:p-4">
+        <div className="w-full flex flex-col pb-8 sm:pb-0 sm:justify-center sm:p-4">
           <div className={`flex-1 sm:flex-initial sm:max-w-7xl sm:mx-auto w-full ${getStatusStyles()} rounded-t-xl sm:rounded-lg animate-slideUp`}>
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="flex justify-between items-start mb-4 sm:mb-6">
