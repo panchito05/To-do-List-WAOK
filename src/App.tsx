@@ -19,7 +19,7 @@ function AppContent() {
   const [teamToDuplicate, setTeamToDuplicate] = useState<Team | null>(null);
   const [viewCount, setViewCount] = useState<number>(() => {
     const saved = localStorage.getItem('teamViewCount');
-    return saved ? parseInt(saved, 10) : 2;
+    return saved ? parseInt(saved, 10) : 1;
   });
 
   // Persist view count
@@ -226,6 +226,22 @@ function AppContent() {
 
   const visibleTeams = getVisibleTeams();
 
+  // Generate responsive grid classes based on viewCount
+  const getGridClasses = () => {
+    switch (viewCount) {
+      case 1:
+        return 'grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8';
+      case 2:
+        return 'grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8';
+      case 3:
+        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8';
+      case 4:
+        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8';
+      default:
+        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[rgb(var(--bg-secondary))]">
       <Header 
@@ -258,7 +274,7 @@ function AppContent() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className={getGridClasses()}>
           {visibleTeams.map((team, index) => {
             const teamElement = (
               <TeamSection

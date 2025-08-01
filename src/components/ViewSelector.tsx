@@ -7,7 +7,7 @@ interface ViewSelectorProps {
 }
 
 const ViewSelector: React.FC<ViewSelectorProps> = ({ currentView, onViewChange }) => {
-  const viewOptions = [2, 4, 6] as const;
+  const viewOptions = [1, 2, 3, 4] as const;
 
   return (
     <div className="flex items-center gap-3">

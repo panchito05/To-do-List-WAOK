@@ -292,7 +292,7 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
   return (
     <div className={`rounded-lg shadow-sm border transition-colors ${getStatusStyles()}`}>
       <div 
-        className="p-4 cursor-pointer select-none"
+        className="p-4 cursor-pointer"
         onClick={() => !isEditing && setIsContentVisible(!isContentVisible)}
       >
         <div className="flex justify-between items-center">

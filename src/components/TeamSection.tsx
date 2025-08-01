@@ -34,6 +34,26 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
     localStorage.setItem(`team-${team.id}-expanded`, isExpanded.toString());
   }, [isExpanded, team.id]);
 
+  // Manejar tecla Escape para cerrar vista expandida
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+
+    if (isFullscreen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevenir scroll del body cuando está en pantalla completa
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreen]);
+
   // Mantener los números originales al filtrar
   const filteredFeatures = team.features
     .map((feature, index) => ({
@@ -155,15 +175,61 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
 
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
-        <div className="min-h-screen w-full flex flex-col pb-8">
-          <div className="bg-[rgb(var(--bg-primary))] flex-1">
-            <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="fixed inset-0 z-50 bg-black/50 overflow-hidden">
+        <div className="h-screen w-full flex flex-col">
+          <div className="bg-[rgb(var(--bg-primary))] flex-1 overflow-y-auto">
+            <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 w-full">
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-xl font-semibold text-[rgb(var(--primary-600))]">#{team.id}</span>
-                  <div>
-                    <h3 className="text-2xl font-bold text-[rgb(var(--text-primary))]">{team.name}</h3>
+                  <div className="flex-1 pr-16">
+                    {isEditing ? (
+                      <div className="relative z-20 bg-[rgb(var(--bg-primary))] rounded-lg p-4 shadow-lg border border-[rgb(var(--border-primary))]">
+                        <div className="flex flex-col gap-4">
+                          <input
+                            type="text"
+                            value={editedName}
+                            onChange={(e) => setEditedName(e.target.value)}
+                            className="w-full px-4 py-3 text-2xl font-bold bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] border border-[rgb(var(--border-primary))] rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary-500))] text-center"
+                            autoFocus
+                          />
+                          <div className="flex items-center gap-3 justify-center">
+                            <button
+                              onClick={handleNameSubmit}
+                              className="flex items-center gap-2 px-6 py-3 bg-[rgb(var(--success))] text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm min-w-[120px] justify-center"
+                              title="Guardar"
+                            >
+                              <Check size={20} />
+                              <span className="font-medium">Guardar</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setIsEditing(false);
+                                setEditedName(team.name);
+                              }}
+                              className="flex items-center gap-2 px-6 py-3 bg-[rgb(var(--error))] text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm min-w-[120px] justify-center"
+                              title="Cancelar"
+                            >
+                              <X size={20} />
+                              <span className="font-medium">Cancelar</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-2xl font-bold text-[rgb(var(--text-primary))]">{team.name}</h3>
+                        {!isReadOnly && (
+                          <button
+                            onClick={() => setIsEditing(true)}
+                            className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--primary-600))] p-1 hover:bg-[rgb(var(--bg-secondary))] rounded-lg"
+                            title="Editar nombre"
+                          >
+                            <Edit2 size={20} />
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <button
@@ -212,7 +278,9 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
   return (
     <div className={`card relative ${team.isPinned ? 'ring-2 ring-[rgb(var(--primary-500))]' : ''}`}>
       {/* BOTONES ESQUINA SUPERIOR DERECHA */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+      <div className={`absolute top-4 right-4 flex items-center gap-2 transition-all duration-200 ${
+        isEditing ? 'z-0 opacity-50' : 'z-10 opacity-100'
+      }`}>
         {onTogglePin && (
           <button
             onClick={() => onTogglePin(team.id)}
@@ -239,34 +307,42 @@ export default function TeamSection({ team, onDuplicate, onDelete, onUpdateName,
       
       <div className="p-4">
         {/* NOMBRE DEL EQUIPO - SOLO ARRIBA */}
-        <div className="mb-4">
+        <div className={`mb-4 transition-all duration-200 ${isEditing ? 'pr-2' : 'pr-24'}`}>
           {isEditing ? (
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-                className="flex-1 px-3 py-2 text-xl font-semibold bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] border border-[rgb(var(--border-primary))] rounded focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary-500))]"
-                autoFocus
-              />
-              <button
-                onClick={handleNameSubmit}
-                className="text-[rgb(var(--success))] hover:text-green-700 p-2 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg"
-              >
-                <Check size={20} />
-              </button>
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditedName(team.name);
-                }}
-                className="text-[rgb(var(--error))] hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-              >
-                <X size={20} />
-              </button>
+            <div className="relative z-20 bg-[rgb(var(--bg-primary))] rounded-lg p-3 shadow-lg border border-[rgb(var(--border-primary))]">
+              <div className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  className="w-full px-3 py-2 text-xl font-semibold bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] border border-[rgb(var(--border-primary))] rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary-500))] text-center"
+                  autoFocus
+                />
+                <div className="flex items-center gap-2 justify-center">
+                  <button
+                    onClick={handleNameSubmit}
+                    className="flex items-center gap-1 px-4 py-2 bg-[rgb(var(--success))] text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm min-w-[100px] justify-center"
+                    title="Guardar"
+                  >
+                    <Check size={16} />
+                    <span className="text-sm font-medium">Guardar</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEditing(false);
+                      setEditedName(team.name);
+                    }}
+                    className="flex items-center gap-1 px-4 py-2 bg-[rgb(var(--error))] text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm min-w-[100px] justify-center"
+                    title="Cancelar"
+                  >
+                    <X size={16} />
+                    <span className="text-sm font-medium">Cancelar</span>
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
-            <h3 className="text-xl font-semibold text-[rgb(var(--text-primary))]">{team.name}</h3>
+            <h3 className="text-xl font-semibold text-[rgb(var(--text-primary))] text-center">{team.name}</h3>
           )}
         </div>
 

@@ -83,7 +83,7 @@ function FeatureList({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3 className="text-lg font-semibold text-[rgb(var(--text-primary))] select-text">
           {t('common.features')}: {features.length}
           <span className="ml-8">
             {t('common.steps')}: {totalSteps}
@@ -91,7 +91,7 @@ function FeatureList({
         </h3>
         {!isReadOnly && <button
           onClick={() => onAddFeature(teamId)}
-          className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700"
+          className="flex items-center gap-1 text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-700))]"
         >
           <Plus size={20} />
           {t('actions.addFeature')}
@@ -119,13 +119,13 @@ function FeatureList({
               />
             </div>
             {index < features.length - 1 && (
-              <div className="border-b-4 border-teal-800 my-2"></div>
+              <div className="border-b-4 border-[rgb(var(--primary-600))] my-2"></div>
             )}
           </div>
         ))}
 
         {features.length === 0 && (
-          <p className="text-center text-gray-500 py-8">
+          <p className="text-center text-[rgb(var(--text-secondary))] py-8">
             {t('common.noFeatures')}
           </p>
         )}
