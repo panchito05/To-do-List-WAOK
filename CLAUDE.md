@@ -23,12 +23,12 @@ This is a React-based Quality Assurance management system with the following arc
 - **React 18** with TypeScript for type safety
 - **Vite** as the build tool for fast development
 - **Tailwind CSS** for utility-first styling
-- **Supabase** for backend (PostgreSQL database + real-time subscriptions)
+- **Local Storage** for data persistence (no backend required)
 - **i18next** for internationalization (English/Spanish)
 
 ### State Management
 - Uses React Context API (TeamsContext) for global state management
-- Teams data is synchronized with Supabase in real-time
+- Teams data is persisted to browser localStorage automatically
 - Local state management for UI components (modals, forms)
 
 ### Component Structure
@@ -39,44 +39,36 @@ This is a React-based Quality Assurance management system with the following arc
 - **Context providers** wrap the app for data access
 
 ### Data Flow
-1. Supabase provides real-time data synchronization
-2. TeamsContext fetches and manages team data
-3. Components subscribe to context for updates
-4. User actions trigger Supabase operations
-5. Real-time subscriptions update all connected clients
+1. TeamsContext loads data from localStorage on app initialization
+2. Components subscribe to context for state updates
+3. User actions update context state
+4. State changes are automatically persisted to localStorage
+5. All data remains in the user's browser (no server required)
 
 ### Key Patterns
 - Drag-and-drop functionality for reordering teams
 - Modal-based UI for complex operations (duplicate, compare, etc.)
-- Optimistic UI updates with Supabase confirmation
-- Media uploads stored in Supabase storage buckets
+- Immediate UI updates with localStorage persistence
+- Media files converted to base64 data URLs for local storage
 
-## Database Schema (Supabase)
+## Data Structure (Local Storage)
 
-The application expects these tables in Supabase:
-- `teams`: id, name, order, created_at, updated_at
-- `features`: id, team_id, number, name, description, created_at
-- `steps`: id, feature_id, number, description, order, status, last_verified
-- `comments`: id, feature_id, text, author, timestamp
-- `verifications`: id, feature_id, timestamp, steps (JSONB)
-- `media`: id, step_id, type, url, created_at
-- `notes`: id, content, files, created_at, updated_at
+The application stores data in browser localStorage using these structures:
+- `qa_teams`: Array of team objects with nested features, steps, and media
+- `qa_verifications`: Array of global verification records
+- `qa-notebook-notes`: String containing user notes
 
 ## Environment Setup
 
-Required environment variables in `.env`:
-```
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+No environment variables or backend setup required. The application runs entirely in the browser using localStorage for data persistence.
 
 ## Important Considerations
 
-1. **Supabase Connection**: The app requires a valid Supabase connection. Users must click "Connect to Supabase" and provide credentials.
+1. **Data Persistence**: All data is stored in browser localStorage. Data will persist between sessions but is device-specific and will be lost if localStorage is cleared.
 
-2. **Real-time Updates**: The app uses Supabase real-time subscriptions. Ensure RLS (Row Level Security) policies are properly configured.
+2. **Media Storage**: Media files are converted to base64 data URLs and stored directly in localStorage. This has size limitations (~5-10MB total per domain).
 
-3. **Media Storage**: Media files are stored in Supabase storage. Ensure storage buckets are created and accessible.
+3. **No Real-time Sync**: Since there's no backend, data changes are not synchronized between different browsers or devices.
 
 4. **Internationalization**: All user-facing text should use i18next keys from `public/locales/[lang]/translation.json`.
 
@@ -85,6 +77,8 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 6. **Styling Convention**: Uses Tailwind CSS utility classes. Avoid custom CSS unless absolutely necessary.
 
 7. **Component Patterns**: Follow existing patterns for modals, forms, and interactive elements for consistency.
+
+8. **Storage Limits**: Be mindful of localStorage size limits when adding large media files. Consider compression or size limits for optimal performance.
 
 ## MCP (Model Context Protocol) Servers - Bidirectional Synchronization
 

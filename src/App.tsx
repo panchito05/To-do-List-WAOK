@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Copy, Plus, RefreshCw, Archive, AlertTriangle } from 'lucide-react';
+import { Trash2, Copy, Plus, RefreshCw, Archive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import TeamSection from './components/TeamSection';
 import Header from './components/Header';
@@ -13,7 +13,7 @@ import { TeamsProvider, useTeams } from './context/TeamsContext';
 
 function AppContent() {
   const { t } = useTranslation();
-  const { teams, setTeams, isLoading, isConnected } = useTeams();
+  const { teams, setTeams, isLoading } = useTeams();
   const [deletedTeams, setDeletedTeams] = useState<Team[]>([]);
   const [, setDraggedTeam] = useState<Team | null>(null);
   const [teamToDuplicate, setTeamToDuplicate] = useState<Team | null>(null);
@@ -44,26 +44,6 @@ function AppContent() {
     );
   }
 
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--bg-secondary))]">
-        <div className="card p-8 max-w-md w-full mx-4 animate-slideUp">
-          <div className="flex items-center gap-3 text-[rgb(var(--warning))] mb-4">
-            <AlertTriangle size={24} />
-            <h2 className="text-xl font-semibold">Database Connection Required</h2>
-          </div>
-          <p className="text-[rgb(var(--text-secondary))] mb-6">
-            Please click the "Connect to Supabase" button in the top right corner to set up your database connection. This is required for the application to function properly.
-          </p>
-          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-            <p className="text-sm text-amber-700 dark:text-amber-300">
-              Once connected, the application will automatically load and you can start managing your teams and features.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const handleImportTeam = (importedTeam: Team) => {
     const existingTeam = teams.find(t => t.name === importedTeam.name);

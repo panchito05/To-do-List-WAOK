@@ -5,7 +5,6 @@ import { Step, VerificationStatus, StepMedia } from '../../types';
 import ConfirmationModal from '../ConfirmationModal';
 import MediaViewer from '../MediaViewer';
 import MediaUpload from './MediaUpload';
-import { supabase } from '../../lib/supabase';
 
 interface StepListProps {
   steps: Step[];
@@ -144,67 +143,36 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
     onUpdate(updatedSteps);
   };
 
-  const handleDeleteMedia = async (stepId: number, mediaId: string) => {
-    try {
-      // Encuentra el paso y el medio específico
-      const step = steps.find(s => s.id === stepId);
-      if (!step || !step.media) return;
-      
-      const mediaItem = step.media.find(m => m.id === mediaId);
-      if (!mediaItem) return;
-
-      // Intenta eliminar del storage (si es posible)
-      try {
-        const filePathParts = mediaItem.url.split('/');
-        const fileName = filePathParts[filePathParts.length - 1];
-        const filePath = `${stepId}/${fileName}`;
+  const handleDeleteMedia = (stepId: number, mediaId: string) => {
+    // Update local state by removing the media item
+    const updatedSteps = steps.map(step =>
+      step.id === stepId ? {
+        ...step,
+        media: (step.media || []).filter(m => m.id !== mediaId)
+      } : step
+    );
+    onUpdate(updatedSteps);
+    
+    // Si estamos visualizando este medio, cerramos el visor
+    if (expandedMedia && expandedMedia.stepId === stepId) {
+      // Si solo hay un medio, cerramos el visor
+      if (expandedMedia.mediaItems.length <= 1) {
+        setExpandedMedia(null);
+      } else {
+        // Si hay más medios, actualizamos la lista
+        const updatedMediaItems = expandedMedia.mediaItems.filter(item => item.id !== mediaId);
+        const newIndex = Math.min(expandedMedia.currentIndex, updatedMediaItems.length - 1);
         
-        await supabase.storage
-          .from('step-media')
-          .remove([filePath]);
-      } catch (storageError) {
-        console.error('Error eliminando archivo de storage:', storageError);
-        // Continuar incluso si hay error en storage
-      }
-
-      // Eliminar de la base de datos
-      await supabase
-        .from('step_media')
-        .delete()
-        .eq('id', mediaId);
-
-      // Actualizar estado local
-      const updatedSteps = steps.map(step =>
-        step.id === stepId ? {
-          ...step,
-          media: (step.media || []).filter(m => m.id !== mediaId)
-        } : step
-      );
-      onUpdate(updatedSteps);
-      
-      // Si estamos visualizando este medio, cerramos el visor
-      if (expandedMedia && expandedMedia.stepId === stepId) {
-        // Si solo hay un medio, cerramos el visor
-        if (expandedMedia.mediaItems.length <= 1) {
+        if (updatedMediaItems.length === 0) {
           setExpandedMedia(null);
         } else {
-          // Si hay más medios, actualizamos la lista
-          const updatedMediaItems = expandedMedia.mediaItems.filter(item => item.id !== mediaId);
-          const newIndex = Math.min(expandedMedia.currentIndex, updatedMediaItems.length - 1);
-          
-          if (updatedMediaItems.length === 0) {
-            setExpandedMedia(null);
-          } else {
-            setExpandedMedia({
-              ...expandedMedia,
-              mediaItems: updatedMediaItems,
-              currentIndex: newIndex
-            });
-          }
+          setExpandedMedia({
+            ...expandedMedia,
+            mediaItems: updatedMediaItems,
+            currentIndex: newIndex
+          });
         }
       }
-    } catch (error) {
-      console.error('Error eliminando medio:', error);
     }
   };
 

@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { X, Image, Video, Loader2 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import { StepMedia } from '../../types';
 
 interface MediaUploadProps {
@@ -35,9 +34,9 @@ export default function MediaUpload({
       return;
     }
 
-    // Validate file size
-    if (isVideo && file.size > 300 * 1024 * 1024) { // 300MB
-      setError('El video no puede superar los 300MB');
+    // Validate file size (reduced for local storage)
+    if (file.size > 50 * 1024 * 1024) { // 50MB limit for local storage
+      setError('El archivo no puede superar los 50MB');
       return;
     }
 
@@ -45,51 +44,33 @@ export default function MediaUpload({
       setIsUploading(true);
       setError(null);
 
-      // Generate unique file name
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${stepId}-${Date.now()}.${fileExt}`;
-      const filePath = `${teamId}/${featureId}/${stepId}/${fileName}`;
-
-      // Upload file to Supabase Storage
-      const { error: uploadError, data } = await supabase.storage
-        .from('step-media')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('step-media')
-        .getPublicUrl(filePath);
-
-      // Save media record in database
-      const { error: dbError, data: mediaData } = await supabase
-        .from('step_media')
-        .insert({
-          step_id: stepId,
-          team_id: teamId,
-          feature_id: featureId,
+      // Convert file to data URL for local storage
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        
+        // Create media object
+        const media: StepMedia = {
+          id: `media-${stepId}-${Date.now()}`,
           type: isVideo ? 'video' : 'photo',
-          url: publicUrl
-        })
-        .select()
-        .single();
+          url: dataUrl,
+          createdAt: new Date().toISOString()
+        };
 
-      if (dbError) throw dbError;
+        onUploadComplete(media);
+        setIsUploading(false);
+        onClose();
+      };
 
-      // Notify parent component
-      onUploadComplete({
-        id: mediaData.id,
-        type: mediaData.type,
-        url: mediaData.url,
-        createdAt: mediaData.created_at
-      });
+      reader.onerror = () => {
+        setError('Error al procesar el archivo');
+        setIsUploading(false);
+      };
 
-      onClose();
+      reader.readAsDataURL(file);
     } catch (err) {
       console.error('Upload error:', err);
-      setError('Error al subir el archivo');
-    } finally {
+      setError('Error al procesar el archivo');
       setIsUploading(false);
     }
   };
@@ -145,7 +126,7 @@ export default function MediaUpload({
                     Haz clic para seleccionar un archivo
                   </p>
                   <p className="text-xs text-gray-500">
-                    Imágenes o videos (máx. 300MB)
+                    Imágenes o videos (máx. 50MB)
                   </p>
                 </button>
               )}

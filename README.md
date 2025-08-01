@@ -1,6 +1,6 @@
 # To Do List WAOK
 
-A comprehensive Quality Assurance testing management system for teams, built with React, TypeScript, and Supabase. This application allows teams to manage features, track verification steps, collaborate through comments, and maintain historical records of all testing activities.
+A comprehensive Quality Assurance testing management system for teams, built with React and TypeScript. This application allows teams to manage features, track verification steps, collaborate through comments, and maintain historical records of all testing activities. All data is stored locally in your browser for privacy and offline access.
 
 ## Features
 
