@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Maximize2, MessageSquare, History, ChevronDown, ChevronRight, Edit2, Check, X, Minimize2, Trash2, Image } from 'lucide-react';
 import { Feature, Step, VerificationStatus, GlobalVerification } from '../../types';
 import StepList from './StepList';
 import CommentSection from './CommentSection';
 import VerificationHistory from './VerificationHistory';
 import ConfirmationModal from '../ConfirmationModal';
+import MoveMenu from '../MoveMenu';
 import { useTeams } from '../../context/TeamsContext';
 
 interface FeatureCardProps {
@@ -12,10 +13,13 @@ interface FeatureCardProps {
   teamId: number;
   onUpdate: (feature: Feature) => void;
   onDelete: () => void;
+  onMove?: (fromIndex: number, toIndex: number) => void;
+  totalFeatures?: number;
+  featureIndex?: number;
   isReadOnly?: boolean;
 }
 
-export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isReadOnly = false }: FeatureCardProps) {
+export default function FeatureCard({ feature, teamId, onUpdate, onDelete, onMove, totalFeatures = 0, featureIndex = 0, isReadOnly = false }: FeatureCardProps) {
   const { addGlobalVerification, teams } = useTeams();
   const [isEditing, setIsEditing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -28,6 +32,8 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
   const [name, setName] = useState(feature.name);
   const [description, setDescription] = useState(feature.description || '');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showMoveMenu, setShowMoveMenu] = useState(false);
+  const numberRef = useRef<HTMLSpanElement>(null);
 
   // Guardar el estado de expansión en localStorage cuando cambie
   useEffect(() => {
@@ -168,7 +174,20 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="flex justify-between items-start mb-4 sm:mb-6">
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <span className="text-lg sm:text-xl font-semibold text-[rgb(var(--primary-600))]">#{feature.number}</span>
+                  <span 
+                    className={`text-lg sm:text-xl font-semibold text-[rgb(var(--primary-600))] cursor-pointer px-2 py-1 rounded-md transition-all ${
+                      showMoveMenu ? 'bg-[rgb(var(--primary-100))] dark:bg-[rgb(var(--primary-900))]/30' : 'hover:bg-[rgb(var(--bg-secondary))]'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!isReadOnly && onMove) {
+                        setShowMoveMenu(!showMoveMenu);
+                      }
+                    }}
+                    title={!isReadOnly && onMove ? "Click para mover" : undefined}
+                  >
+                    #{feature.number}
+                  </span>
                   <div>
                     {isEditing ? (
                       <div className="flex-1 space-y-2">
@@ -354,7 +373,21 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
               ) : (
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold text-[rgb(var(--primary-600))]">#{feature.number}</span>
+                    <span 
+                      ref={numberRef}
+                      className={`text-lg font-semibold text-[rgb(var(--primary-600))] cursor-pointer px-2 py-1 rounded-md transition-all ${
+                        showMoveMenu ? 'bg-[rgb(var(--primary-100))] dark:bg-[rgb(var(--primary-900))]/30' : 'hover:bg-[rgb(var(--bg-secondary))]'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isReadOnly && onMove) {
+                          setShowMoveMenu(!showMoveMenu);
+                        }
+                      }}
+                      title={!isReadOnly && onMove ? "Click para mover" : undefined}
+                    >
+                      #{feature.number}
+                    </span>
                     <h4 className="font-medium text-[rgb(var(--text-primary))]">{feature.name}</h4>
                     {!isReadOnly && (
                       <button
@@ -480,6 +513,21 @@ export default function FeatureCard({ feature, teamId, onUpdate, onDelete, isRea
         message={`¿Estás seguro de que deseas eliminar la funcionalidad "${feature.name}"? Esta acción no se puede deshacer.`}
         confirmText="Eliminar"
       />
+      
+      {onMove && (
+        <MoveMenu
+          isOpen={showMoveMenu}
+          onClose={() => setShowMoveMenu(false)}
+          currentIndex={featureIndex}
+          totalItems={totalFeatures}
+          onMove={(toIndex) => {
+            onMove(featureIndex, toIndex);
+            setShowMoveMenu(false);
+          }}
+          itemType="feature"
+          anchorRef={numberRef}
+        />
+      )}
     </div>
   );
 }

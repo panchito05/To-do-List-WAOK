@@ -14,7 +14,7 @@ i18n
       escapeValue: false,
     },
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      loadPath: '/To-do-List-WAOK/locales/{{lng}}/{{ns}}.json',
     },
     detection: {
       order: ['querystring', 'cookie', 'localStorage', 'navigator'],

@@ -2,6 +2,7 @@
 
 claude --dangerously-skip-permissions
 
+https://todo-list-waok.netlify.app/
 ═══════════════════════════════════════════════════════════════════════════════
 
 ### Prompt: Confirmación de Entendimiento

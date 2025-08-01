@@ -59,7 +59,10 @@
     "markAsWorking": "Mark as Working",
     "markAsNotWorking": "Mark as Not Working",
     "importTeam": "Import Team",
-    "exportTeam": "Export Team"
+    "exportTeam": "Export Team",
+    "moveBelow": "Move below",
+    "moveToStart": "Move to beginning",
+    "moveAfter": "After"
   },
   "messages": {
     "confirmDelete": "Are you sure you want to delete this?",

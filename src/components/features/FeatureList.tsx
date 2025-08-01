@@ -115,6 +115,9 @@ function FeatureList({
                 teamId={teamId}
                 onUpdate={(updatedFeature) => onUpdateFeature(teamId, updatedFeature)}
                 onDelete={() => onDeleteFeature(feature.id)}
+                onMove={onReorderFeatures}
+                totalFeatures={features.length}
+                featureIndex={index}
                 isReadOnly={isReadOnly}
               />
             </div>

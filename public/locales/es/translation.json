@@ -61,7 +61,10 @@
     "importTeam": "Importar Equipo",
     "exportTeam": "Exportar Equipo",
     "delete": "Eliminar",
-    "duplicate": "Duplicar"
+    "duplicate": "Duplicar",
+    "moveBelow": "Mover debajo de",
+    "moveToStart": "Mover al inicio",
+    "moveAfter": "Después de"
   },
   "messages": {
     "confirmDelete": "¿Estás seguro de que deseas eliminar esto?",

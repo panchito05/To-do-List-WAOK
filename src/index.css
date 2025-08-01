@@ -253,4 +253,32 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+  
+  /* Animaciones suaves para reordenamiento */
+  .feature-item-container {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .feature-card {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  /* Animación para los pasos */
+  .step-item {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  /* Efecto visual cuando se está moviendo */
+  .moving {
+    @apply opacity-80 scale-95;
+  }
+  
+  /* Animación para el menú contextual */
+  .move-menu-enter {
+    @apply opacity-0 scale-95;
+  }
+  
+  .move-menu-enter-active {
+    @apply opacity-100 scale-100 transition-all duration-200;
+  }
 }

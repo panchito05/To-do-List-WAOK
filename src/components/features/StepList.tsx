@@ -5,6 +5,7 @@ import { Step, VerificationStatus, StepMedia } from '../../types';
 import ConfirmationModal from '../ConfirmationModal';
 import MediaViewer from '../MediaViewer';
 import MediaUpload from './MediaUpload';
+import MoveMenu from '../MoveMenu';
 
 interface StepListProps {
   steps: Step[];
@@ -30,6 +31,8 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
   const [mediaToDelete, setMediaToDelete] = useState<{ stepId: number; mediaId: string } | null>(null);
   const [mediaOptionsOpen, setMediaOptionsOpen] = useState<string | null>(null);
   const [downloadingMedia, setDownloadingMedia] = useState<string | null>(null);
+  const [showMoveMenu, setShowMoveMenu] = useState<number | null>(null);
+  const numberRefs = useRef<{[key: number]: HTMLSpanElement}>({});
 
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
@@ -296,7 +299,21 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
             </div>
             
             <div className="flex-1">
-              <span className="font-medium text-[rgb(var(--primary-600))] mr-2">#{step.number}</span>
+              <span 
+                ref={(el) => { if (el) numberRefs.current[step.id] = el; }}
+                className={`font-medium text-[rgb(var(--primary-600))] mr-2 cursor-pointer px-2 py-1 rounded-md transition-all ${
+                  showMoveMenu === step.id ? 'bg-[rgb(var(--primary-100))] dark:bg-[rgb(var(--primary-900))]/30' : 'hover:bg-[rgb(var(--bg-secondary))]'
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (showVerification) {
+                    setShowMoveMenu(showMoveMenu === step.id ? null : step.id);
+                  }
+                }}
+                title={showVerification ? "Click para mover" : undefined}
+              >
+                #{step.number}
+              </span>
               {editingStepId === step.id ? (
                 <textarea
                   ref={textareaRef}
@@ -608,6 +625,24 @@ function StepList({ steps, onUpdate, onVerify, showVerification = true }: StepLi
               currentIndex: newIndex
             });
           }}
+        />
+      )}
+      
+      {showMoveMenu !== null && (
+        <MoveMenu
+          isOpen={true}
+          onClose={() => setShowMoveMenu(null)}
+          currentIndex={steps.findIndex(s => s.id === showMoveMenu)}
+          totalItems={steps.length}
+          onMove={(toIndex) => {
+            const currentStep = steps.find(s => s.id === showMoveMenu);
+            if (currentStep) {
+              reorderSteps(currentStep, steps[toIndex]);
+            }
+            setShowMoveMenu(null);
+          }}
+          itemType="step"
+          anchorRef={{ current: numberRefs.current[showMoveMenu] }}
         />
       )}
     </div>
